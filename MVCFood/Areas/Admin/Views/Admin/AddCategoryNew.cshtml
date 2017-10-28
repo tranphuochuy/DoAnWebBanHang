@@ -2,21 +2,21 @@
 
 @{
     ViewBag.Title = "AddCategoryNew";
-    Layout = "~/Areas/Admin/Views/Admin/Index.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 <h2>AddCategoryNew</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "CreateCategory",null,new { @class = "btn btn-primary" })
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.AllTypeProduct)
+            Id
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AllTypeProduct)
+            Category Name
         </th>
         <th></th>
     </tr>
@@ -24,15 +24,14 @@
 @foreach (var item in Model.AllTypeProduct) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            @item.Id
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
+           @item.Name
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("Edit", "EditCategory", new { id=item.Id }, new {@class="btn btn-info" }) 
+            <a href="@Url.Action("DeleteCategory",new { id = item.Id})" onclick="return confirm('Bạn có chắc muốn xóa loại này?');" class="btn btn-danger btn-sm">Xóa</a>
         </td>
     </tr>
 }

@@ -1,0 +1,289 @@
+﻿@using MVCFood.ViewModels.Home
+@using PagedList.Mvc; 
+@model HomeViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+<!-- slide -->
+<div class="container">
+    <div class="main-title">
+        <h2 style="color:blue;">Sản phẩm mới</h2>
+    </div>
+</div>
+
+<div class="c-carousel">
+    <div class="c-carousel__arrow c-carousel__arrow--left"></div>
+    <div class="c-carousel__arrow c-carousel__arrow--right"></div>
+    <ul class="c-carousel__slides">
+        @foreach (var item in Model.NewProduct)
+        {
+            <li>
+                
+                <a href="javascript:ShowDetail('@item.Id');">
+                    <img class="slide-img" src="~/Assets/Personal/image/Product/@item.Image" />
+                    <div class="title-slide">
+                        @{ 
+                            int temp = (item.PromotionPrice == 0) ? item.UnitPrice : item.PromotionPrice;
+                            temp = temp / 1000;
+                        }
+                        @temp.ToString("N3")₫
+                    </div>
+                </a>
+            </li>
+        }
+       
+
+    </ul>
+</div>
+
+ <!-- products -->
+<div class="container" style="margin-top:30px;">
+    <div class="main-title">
+        <h1 style="color:blue;">@ViewBag.Message</h1>
+    </div>
+    <div class="portfolio-wrapper">
+        <button class="nav-product">
+            <span class="icon-container">
+                <span class="line line01"></span>
+                <span class="line line02"></span>
+                <span class="line line03"></span>
+                <span class="line line04"></span>
+            </span>
+        </button>
+        <div class="works-filter">
+            <a href="javascript:void(0)" class="filter active" data-filter="mix">Tất cả</a>
+            @foreach (var item in Model.AllTypeProduct)
+            {
+                <a href="javascript:void(0)" class="filter" data-filter="@item.Id">@item.Name</a>
+            }
+         
+        </div>
+        <form></form>
+        <div class="js-masonry">
+            <div class="row" id="work-grid">
+                @foreach (var item in Model.AllProduct)
+                {
+                    <div class="col-md-3 col-sm-4 col-xs-12 mix @item.TypeProduct.Id animated fadeInLeft">
+                        <div style="border:solid 1px black">
+                            <div class="img home-portfolio-image">
+                                <img style="width:100%" src="~/Assets/Personal/image/Product/@item.Image" alt="Portfolio Item">
+                                <div class="overlay-thumb">
+                                    <a href="javascript:void(0)" class="like-product">
+                                        <i class="ion-ios-heart-outline"></i>
+                                        <span class="like-product">Liked</span>
+                                        <span class="output">250</span>
+                                    </a>
+                                    <div class="details">
+                                        <span class="title">@item.Name</span>
+                                        <span class="info">@item.Description</span>
+                                    </div>
+                                    <span class="btnBefore"></span>
+                                    <span class="btnAfter"></span>
+                                    <a class="main-portfolio-link" href="javascript:ShowDetail('@item.Id');"></a>
+                                </div>
+                            </div>
+                            <div align="center" >
+                               
+              
+                                @if (item.PromotionPrice == 0)
+                                {
+                                    
+                                     int temp = item.UnitPrice / 1000;
+                                    
+                                    <h2 style="color:red;padding-bottom:3%;">@temp.ToString("N3")₫</h2>
+                                }
+                                else
+                                {
+                                    int temp = item.UnitPrice / 1000;
+                                    <h2 style="color:red;">@temp.ToString("N3")₫ <span><img src="~/Assets/Personal/image/km.gif" /></span></h2>
+                                }
+
+                                <div class="snipcart-details  hvr-outline-out">
+                                    <input type="submit" value="Đặt hàng" class="button" onclick="AddToCart('@item.Id')">
+                                </div>
+                            </div>
+                            <div class="space20">
+                            </div>
+                        </div>
+                        <div class="space20">
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+ <!-- Modal cart-->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="color:blueviolet">Giỏ hàng</h4>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <table style="width:100%;" id="modal-table">
+                    
+                   
+                </table>
+                <h4 style="color:red;" id="total-price" class="text-right"></h4>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+ <!-- Modal detail-->
+<div class="modal fade" id="Modal-detail" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" style="color:blueviolet">Chi tiết sản phẩm</h4>
+            </div>
+            <div class="modal-body" id="modaldetail-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="~/Assets/Personal/image/Product/cb-A.png" />
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-7">
+                        <h3 id="detailName" style="font-weight:bold">Gà quay</h3>
+                        <h4 id="detailPrice">Giá: 100.000</h4>
+                        <h5 id="detailDescription">Mô tả: gagagaagagaagagaagagagagagaagaga</h5>
+                        
+                        <div>
+                            <div class="space30"></div>
+                            <label>Chọn số lượng</label>
+                            <div class="space10"></div>
+                            <input type="number" value="1" id="numItem" onchange="CheckValue();" />
+                        </div>
+                        <div class="space30"></div>
+                        <div class="snipcart-details  hvr-outline-out" id="btn-addCart">
+                           
+                        </div>
+                        
+                        
+                        <div class="space20"></div>
+                        
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section scripts{
+    <script src="~/Assets/Personal/js/slide.js"></script>
+    <script>
+        function CheckValue() {
+            var num = $("#numItem").val();
+            if (num < 1) {
+
+                $("#btn-addCart").hide();
+            }
+            else {
+                $("#btn-addCart").show();
+            }
+        }
+        function AddToCart(ProductId) {
+
+            $.ajax({
+                type: 'POST',
+                url: '/ShoppingCart/AddToCart',
+                data: { id: ProductId },
+                success: function (data) {
+                    $("#Current_Cart").html(data.CartCount);
+                    $("#TotalPay").html(ConvertMoney(data.TotalPay));
+                    getDataCart();
+                }
+            });
+            
+        }
+        function getDataCart() {
+            $.ajax({
+                type: 'GET',
+                url: '/ShoppingCart/GetListCart',
+                success: function (data) {
+                    console.log(data);
+                    $("#modal-table").html('<tr class="tb-header">' +
+                        '<th class="tb-body">Tên món ăn </th >' +
+                        '<th class="tb-body">Số lượng</th>' +
+                        '<th class="tb-body">Giá</th>' +
+                        '<th class="tb-body">Tổng tiền</th>' +
+                        '</tr>');
+
+                    var total = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        var name = data[i].Product.Name;
+                        var price = (data[i].Product.PromotionPrice == '0') ? data[i].Product.UnitPrice : data[i].Product.PromotionPrice;
+                        var totalItem = Number(price) * Number(data[i].Quantity);
+                        total += totalItem;
+                        $("#modal-table").append('<tr style="text-align:center;">' +
+                            '<td class="tb-body">' + name + '</td>' +
+                            '<td class="tb-body">' + data[i].Quantity + '</td>' +
+                            '<td class="tb-body">' + ConvertMoney(price) + '</td>' +
+                            '<td class="tb-body">' + ConvertMoney(totalItem) + '</td>' +
+                            '</tr>');
+                    }
+                    $("#total-price").html("Tổng tiền: " + ConvertMoney(total));
+                    $("#myModal").modal("show");
+                }
+            });
+        }
+        function ShowDetail(ProductId) {
+            $("#numItem").val(1);
+            $("#btn-addCart").show();
+            $.ajax({
+                type: 'GET',
+                url: '/Product/Detail/' + ProductId,
+                success: function (data) {
+                    console.log(data);
+                    var price = (data.PromotionPrice == '0') ? data.UnitPrice : data.PromotionPrice;
+
+                    $("#detailName").html(data.Name);
+                    $("#detailPrice").html("Giá: " + ConvertMoney(price));
+                    $("#detailDescription").html("Mô tả: " + data.Description);
+                    $("#btn-addCart").html('<input type="submit" value="Đặt hàng"  onclick="AddToCartModal(' + ProductId + ')" class="button" >');
+                    $("#Modal-detail").modal("show");
+                }
+            });
+            
+           
+        }
+        function AddToCartModal(ProductId) {
+            $("#mesage-detail").html("");
+            var Num=$("#numItem").val();
+            $.ajax({
+                type: 'POST',
+                url: '/ShoppingCart/AddManyCartPlush',
+                data: { id: ProductId,num: Num},
+                success: function (data) {
+                    $("#Current_Cart").html(data.CartCount);
+                    $("#TotalPay").html(ConvertMoney(data.TotalPay));
+                    $("#Modal-detail").modal("hide");
+                    getDataCart();
+                }
+            });
+        }
+        function ConvertMoney(values) {
+            var temp = values.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.") + "₫";
+            return temp;
+        }
+
+    </script>
+}

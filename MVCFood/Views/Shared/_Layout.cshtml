@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Đồ ăn nhanh ngon nhất Sài Gòn</title>
+    <meta name="description" content="">
+    <meta name="msapplication-tap-highlight" content="yes" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0" />
+    <!-- Google Web Font -->
+    
+
+    <!--  Bootstrap 3-->
+    <link rel="stylesheet" href="~/Assets/Personal/css/bootstrap.min.css">
+
+    <!-- Animate -->
+    <link rel="stylesheet" href="~/Assets/Personal/css/animate.css">
+
+    <!-- Web Icons Font -->
+    <link rel="stylesheet" href="~/Assets/Personal/css/pe-icon-7-stroke.css">
+    <link rel="stylesheet" href="~/Assets/Personal/css/iconmoon.css">
+    <link rel="stylesheet" href="~/Assets/Personal/css/et-line.css">
+    <link rel="stylesheet" href="~/Assets/Personal/css/ionicons.css">
+
+
+
+    <!-- Costum Styles -->
+    <link rel="stylesheet" href="~/Assets/Personal/css/main.css">
+    <link rel="stylesheet" href="~/Assets/Personal/mycss/my.css">
+    <link rel="stylesheet" href="~/Assets/Personal/mycss/space.css">
+    <link rel="stylesheet" href="~/Assets/Personal/css/responsive.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/ico" href="~/Assets/Personal/favicon.ico">
+    <!-- Modernizer & Respond js -->
+
+    <script src="~/Assets/Personal/js/vendor/jquery-1.11.2.min.js"></script>
+
+</head>
+<body>
+    <div class="header-banner">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+               <img height="80" style="margin-left:50px;" src="~/Assets/Personal/image/logo/coollogo.gif"/>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                
+            </div>
+            @{Html.RenderAction("GetCartShop", "ShoppingCart"); }
+        </div>
+    </div>
+    <div class="navbar navbar-default menu-header ">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Trang chủ","Index","Home")</li>
+                    <li>@Html.ActionLink("Giới thiệu", "Index", "Home")</li>
+
+                </ul>
+                
+                <form class="navbar-form navbar-left" action="/Home/Index" method="post">
+                    <div class="form-group has-feedback">
+                        <input type="text" name="search" class="form-control" placeholder="Tìm kiếm...." />
+                    </div>
+                    <button type="submit" class="btn btn-default glyphicon glyphicon-search"></button>
+                </form>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div> 
+    @RenderBody()
+    <script>
+  $(document).ready(function() {
+    $('.works-filter').click(function() {
+      $('.mix').removeClass('animated');
+    });
+  });
+    </script>
+
+
+    <a href="javascript:void(0)" class="scroll-top" id="scroll-top"><i class="pe-7s-angle-up"></i></a>
+    <script src="~/Assets/Personal/js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="~/Assets/Common/Scripts/jquery.validate.js"></script>
+    <script data-pace-options='{ "ajax": false }' src="~/Assets/Personal/js/vendor/pace.min.js"></script>
+    <script src="~/Assets/Personal/js/vendor/bootstrap.min.js"></script>
+    <script src="~/Assets/Personal/js/vendor/isotope.pkgd.min.js"></script>
+    <script src="~/Assets/Personal/js/main.js"></script>
+    <script src="~/Assets/Personal/js/menuscroll.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

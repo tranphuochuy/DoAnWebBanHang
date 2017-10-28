@@ -1,0 +1,162 @@
+﻿@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
+@using MVCFood.DTO
+@using MVCFood.Models
+@model List<CartItem>
+@{
+    ViewBag.Title = "ListCart";
+}
+<div class="container">
+@if (Model.Count!=0)
+{
+    CartItem temp = new CartItem();
+    long totalPay= temp.TotalPayCart(Model) / 1000;
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+           
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th class="text-center">Giá</th>
+                            <th class="text-center">Thành tiền</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            int price = (item.Product.PromotionPrice == 0) ? item.Product.UnitPrice : item.Product.PromotionPrice;
+                            long totalPriceItem = price * item.Quantity / 1000;
+                            price = price / 1000;
+                        <tr>
+                            <td class="col-sm-5 col-md-5">
+                                <div class="media">
+                                    <a class="thumbnail pull-left" href="#"> 
+                                    <img class="media-object" src="~/Assets/Personal/image/Product/@item.Product.Image" style="width: 40px; height: 40px;"> 
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="space10"></div>
+                                        <h4 style="padding-left:5px" class="media-heading"><a href="#">@item.Product.Name</a></h4>          
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="col-sm-2 col-md-2" style="text-align: center">
+                                <div class="space10"></div>
+                                @{ 
+                                    string idInput = "txt" + @item.Product.Id;
+                                    string idTotalPriceItem = "total" + @item.Product.Id;
+                                    string idPrice = "price" + @item.Product.Id;
+                                    }
+                                <input type="number" class="form-control" id="@idInput" onchange="AddValue('@item.Product.Id')" value="@item.Quantity">
+                            </td>
+                            <td class="col-sm-2 col-md-2 text-center">
+                                <div class="space20"></div>
+                                <strong id="@idPrice" data-price-money="@price">@price.ToString("N3")₫</strong>
+                            </td>
+                            <td class="col-sm-2 col-md-2 text-center">
+                                <div class="space20"></div>
+                                <strong id="@idTotalPriceItem">@totalPriceItem.ToString("N3")₫</strong>
+                            </td>
+                            <td class="col-sm-1 col-md-1">
+                                <div class="space15"></div>
+                                <a href="/ShoppingCart/RemoveCartItem/@item.Product.Id" class="btn btn-danger">
+                                    
+                                    <span class="glyphicon glyphicon-remove"></span> Xóa 
+                                </a>
+                            </td>
+                
+                        </tr>
+                        }
+                        <tr>
+                            <td>   </td>
+                            <td>   </td>
+                            <td>   </td>
+                            <td><h3>Tổng tiền</h3></td>
+                            <td class="text-right"><h3><strong id="totalPayTable">@totalPay.ToString("N3")₫</strong></h3></td>
+                        </tr>
+                        <tr>
+                            <td>   </td>
+                            <td>   </td>
+                            <td>   </td>
+                            <td>
+                                <a href="/" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-shopping-cart"></span>Tiếp tục mua hàng
+                                </a>
+                            </td>
+                            <td>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a href="/ShoppingCart/Payment" class="btn btn-success">
+                                        Đặt mua <span class="glyphicon glyphicon-play"></span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="/ShoppingCart/PaymentNew" class="btn btn-success">
+                                        Đặt mua <span class="glyphicon glyphicon-play"></span>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+        
+            
+        </div>
+    </div>
+}
+else
+{
+    <div class="btn btn-default">
+        @Html.ActionLink("Quay lại trang chủ","Index","Home")
+    </div>
+}
+</div>
+
+@section scripts{
+    <script>
+        function AddValue(ProductId) {
+            var idInput = "#txt" + ProductId;
+            var idTotalPriceItem = "#total" + ProductId;
+            var idPrice = "#price" + ProductId;
+            var qty = $(idInput).val();
+            var price = $(idPrice).attr("data-price-money");
+            
+            console.log(price);
+            if (qty < 1) {
+                alert("Bạn không thể chọn số lượng nhỏ hơn 1");
+                $(idInput).val(1);
+                AddManyCart(ProductId, 1);
+                var temp = ConvertMoney( Number(price) * 1000);
+                $(idTotalPriceItem).html(temp);
+            }
+            else {
+
+                AddManyCart(ProductId, qty);
+                var temp = ConvertMoney(Number(qty) * Number(price) * 1000);
+                $(idTotalPriceItem).html(temp);
+            }
+            
+        }
+        function ConvertMoney(values) {
+            var temp =  values.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.") + "₫";
+            return temp;
+        }
+        function AddManyCart(ProductId, Num) {
+            $.ajax({
+                type: 'POST',
+                url: '/ShoppingCart/AddManyCart',
+                data: { id: ProductId,num: Num },
+                success: function (data) {
+                    console.log(data);
+                    $("#Current_Cart").html(data.CartCount);
+                    var money = ConvertMoney(data.TotalPay);
+                    $("#TotalPay").html(money);
+                    $("#totalPayTable").html(money);
+                }
+            });
+        }
+    </script>
+    }

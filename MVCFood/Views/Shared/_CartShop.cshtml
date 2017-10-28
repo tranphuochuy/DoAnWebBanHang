@@ -1,0 +1,13 @@
+﻿@{ 
+    long temp = ViewBag.TotalPay/1000;
+    
+}
+<div class="col-md-2 col-sm-6">
+    <div class="space20"></div>
+    <a class="btn btn-lg btn-info" href="/ShoppingCart/ListCart">
+    <span class="glyphicon glyphicon-shopping-cart"> </span>
+    
+    <span><span id="TotalPay">@temp.ToString("N3")₫</span> (<span id="Current_Cart">@ViewBag.CartCount sp</span>)</span>
+       
+    </a>
+</div>
